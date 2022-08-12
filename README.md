@@ -1,5 +1,5 @@
 # cisc332Project
-A project created for CISC 332 Database Management Systems
+A project created for CISC 332 Database Management Systems.
 A vaccine record system that uses a MariaDB database to store 
 mock data on COVID-19 Vaccine clinics. Stores records recorded 
 vaccinations, on past appointments, available vaccines/appointments,
