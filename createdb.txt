@@ -1,0 +1,206 @@
+drop database covidDB;
+create database covidDB;
+
+CREATE TABLE Employee(
+EmpID  CHAR(8) NOT NULL,
+FirstName VARCHAR(15) NOT NULL,
+LastName VARCHAR(20) NOT NULL,
+PRIMARY KEY(EmpID));
+
+CREATE TABLE Credentials(
+EmpID  CHAR(8) NOT NULL,
+Credential CHAR(2) NOT NULL,
+PRIMARY KEY(EmpID, Credential),
+FOREIGN KEY(EmpID) REFERENCES Employee(EmpID) ON DELETE CASCADE);
+
+CREATE TABLE Medical_Practice(
+Name  CHAR(30) NOT NULL,
+PhoneNum CHAR(10),
+PRIMARY KEY(Name));
+
+CREATE TABLE Vaccination_Site(
+Name VARCHAR(30) NOT NULL,
+BNum VARCHAR(6) NOT NULL,
+Street VARCHAR(30) NOT NULL,
+City VARCHAR(30) NOT NULL,
+Province CHAR(2) NOT NULL,
+PostalCode CHAR(6) NOT NULL,
+PRIMARY KEY(Name));
+
+CREATE TABLE Doctor(
+EmpID CHAR(8) NOT NULL,
+Practice VARCHAR(30) NOT NULL,
+PRIMARY KEY(EmpID),
+FOREIGN KEY(EmpID) REFERENCES Employee(EmpID) ON DELETE CASCADE,
+FOREIGN KEY(Practice) REFERENCES Medical_Practice(Name) ON DELETE CASCADE);
+
+CREATE TABLE Nurse(
+EmpID CHAR(8) NOT NULL,
+PRIMARY KEY(EmpID),
+FOREIGN KEY(EmpID) REFERENCES Employee(EmpID) ON DELETE CASCADE);
+
+CREATE TABLE Clinic_Staff(
+EmpID CHAR(8) NOT NULL,
+Clinic VARCHAR(30) NOT NULL,
+PRIMARY KEY(EmpID, Clinic),
+FOREIGN KEY(EmpID) REFERENCES Employee(EmpID) ON DELETE CASCADE,
+FOREIGN KEY(Clinic) REFERENCES Vaccination_Site(Name) ON DELETE CASCADE);
+
+CREATE TABLE Vaccination_Dates(
+OpenDate DATE,
+Clinic VARCHAR(50) NOT NULL,
+FOREIGN KEY(Clinic) REFERENCES Vaccination_Site(Name) ON DELETE CASCADE);
+
+CREATE TABLE Company(
+Name VARCHAR(20) NOT NULL,
+BNum VARCHAR(6) NOT NULL,
+Street VARCHAR(30) NOT NULL,
+City VARCHAR(30) NOT NULL,
+Province CHAR(2),
+PostalCode VARCHAR(6) NOT NULL,
+Country CHAR(3) NOT NULL,
+PRIMARY KEY(Name));
+
+CREATE TABLE Vaccine(
+LotID CHAR(6) NOT NULL,
+Expiry DATE,
+ProductionDate DATE,
+Doses INTEGER NOT NULL,
+Vendor VARCHAR(20) NOT NULL,
+Clinic VARCHAR(30) NOT NULL,
+PRIMARY KEY(LotID),
+FOREIGN KEY(Vendor) REFERENCES Company(Name),
+FOREIGN KEY(Clinic) REFERENCES Vaccination_Site(Name));
+
+CREATE TABLE Patient(
+FirstName VARCHAR(15) NOT NULL,
+LastName VARCHAR(20) NOT NULL,
+OHIP CHAR(10) NOT NULL,
+DOB DATE NOT NULL,
+PhoneNum CHAR(10) NOT NULL,
+PRIMARY KEY(OHIP));
+
+CREATE TABLE Spouse(
+FirstName CHAR(15) NOT NULL,
+LastName CHAR(20) NOT NULL,
+OHIP CHAR(10) NOT NULL,
+PhoneNum CHAR(10),
+SpouseOHIP CHAR(10) NOT NULL,
+PRIMARY KEY(OHIP, SpouseOHIP),
+FOREIGN KEY(SpouseOHIP) REFERENCES Patient(OHIP) ON DELETE CASCADE);
+
+CREATE TABLE Vaccination(
+LotID CHAR(6) NOT NULL,
+POHIP CHAR(10) NOT NULL,
+Clinic VARCHAR(30) NOT NULL,
+AppointmentDate DATE,
+AppointmentTime TIME,
+PRIMARY KEY(POHIP, LotID, Clinic),
+FOREIGN KEY(LotID) REFERENCES Vaccine(LotID),
+FOREIGN KEY(POHIP) REFERENCES Patient(OHIP),
+FOREIGN KEY(Clinic) REFERENCES Vaccination_Site(Name));
+
+insert into Medical_Practice values
+('Queens SWS', '6135332506'),
+('Good Health Clinic', '6138675309')
+;
+
+insert into Vaccination_Site values
+('Beechgrove', '51', 'Heakes', 'Kingston', 'ON', 'K7M9A6'),
+('Queens', '101', 'Queens Cres', 'Kingston', 'ON', 'K7L2TW'),
+('Main St', '221B', 'Main', 'Saint-Louis-du-Ha! Ha!', 'QC', 'G0L3S0')
+;
+insert into Employee values
+('12345679','John', 'Doe'),
+('12345678','Jane', 'Doe'),
+('99990000', 'Ann', 'Chovey'),
+('11111111', 'John', 'Appleseed'),
+('10000000', 'Clark', 'Kent'),
+('90000000', 'Teri', 'Dactyl'),
+('99999999', 'Nicki', 'Minaj')
+;
+
+insert into Doctor values
+('12345678','Queens SWS'),
+('11111111', 'Good Health Clinic'),
+('99999999', 'Good Health Clinic')
+;
+
+insert into Nurse values
+('12345678'),
+('99990000'),
+('10000000'),
+('90000000'),
+('99999999')
+;
+
+insert into Credentials values
+('12345678', 'DR'),
+('12345679', 'RN'),
+('11111111', 'DR'),
+('99990000', 'RN'),
+('99990000', 'NP'),
+('99999999', 'DR'),
+('10000000', 'DR')
+;
+
+insert into Clinic_Staff values
+('12345679', 'Beechgrove'),
+('99990000', 'Beechgrove'),
+('10000000', 'Beechgrove'),
+('10000000', 'Queens'),
+('90000000', 'Queens'),
+('99999999', 'Main St')
+;
+
+insert into Vaccination_Dates values
+('2022-01-10', 'Beechgrove'),
+('2022-01-16', 'Beechgrove'),
+('2022-01-20', 'Beechgrove'),
+('2022-02-03', 'Beechgrove'),
+('2022-02-7', 'Queens'),
+('2022-02-08', 'Queens')
+;
+
+insert into Company values
+('AstraZeneca', '1','Francis Crick Avenue','Cambridge', NULL, 'CB20AA','GBR'),
+('Pfizer','235','East 42nd','New York', 'NY', '10017', 'USA'),
+('Johnson&Johnson', 'One', 'Johnson and Johnson Plaza', 'New Brunswick', 'NJ', '08933', 'USA'),
+('Moderna', '200', 'Technology Square', 'Cambridge', 'MA', '02139', 'USA')
+;
+
+insert into Vaccine values
+('1A2B3C', '2022-03-01', '2021-12-12', 200, 'Pfizer', 'Beechgrove'),
+('EY0578', '2022-04-01', '2022-01-12', 150, 'Pfizer', 'Beechgrove'),
+('MT0062', '2022-05-01', '2022-01-12', 100, 'AstraZeneca', 'Queens'),
+('ABC123', '2022-06-01', '2022-02-01', 100, 'Moderna', 'Beechgrove'),
+('123ABD', '2022-06-01', '2022-02-01', 100, 'Moderna', 'Main St'),
+('123XYZ', '2022-06-15', '2022-02-15', 150, 'Moderna', 'Main St'),
+('XYZ456', '2022-06-01', '2022-02-01', 100, 'Johnson&Johnson', 'Main St')
+;
+
+insert into Patient values
+('Chloe', 'Kim', '0123456789', '2000-04-23', '1002001234'),
+('Michael', 'Phelps', '6677889900', '1985-06-30', '9990009999'),
+('Max', 'Parrot', '1122334455','1994-06-06', '1234567890'),
+('Karen', 'Chen', '1020304050', '1999-08-16', '8007006000'),
+('John', 'Cena', '9999999999', '1986-09-03', '3050009999'),
+('Dula', 'Peep', '2626262626', '1986-09-03', '3050009991'),
+('Ryan','Reynolds', '1976102310', '1976-10-23', '9871236543')
+;
+
+insert into Spouse values
+('Michelle','Phelps','6677889900','9990009999','0123456789'),
+('Spouse', 'Cena', '2030405060','9008007000', '9999999999'),
+('Blake', 'Lively', '0908070605', '9871236543', '1976102310')
+;
+insert into Vaccination values
+('1A2B3C', '0123456789', 'Beechgrove','2022-01-10', '10:00:00'),
+('EY0578', '6677889900', 'Beechgrove', '2022-01-16', '09:00:00'),
+('1A2B3C', '9999999999', 'Beechgrove', '2022-01-20', '14:00:00'),
+('EY0578', '1122334455', 'Beechgrove', '2022-02-03', '16:30:00'),
+('MT0062', '1020304050', 'Queens', '2022-02-7', '13:00:00'),
+('MT0062', '1976102310', 'Queens', '2022-02-08', '12:10:00'),
+('ABC123', '2626262626', 'Beechgrove', '2022-02-09', '12:10:00'),
+('123ABD', '2626262626', 'Main St', '2022-02-10', '12:10:00')
+;

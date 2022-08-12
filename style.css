@@ -1,0 +1,32 @@
+body {
+    display:block; background-color: powderblue; font-family: verdana; line-height: 28px; background-color: powderblue; max-width:900px; margin: auto;
+}
+h1   {
+  color: black;
+}
+p    {
+  color: black;
+}
+a:link {
+  color: CornflowerBlue
+  text-decoration: underline;
+  text-decoration-color: powderblue;
+}
+a:visited {
+  color: CornflowerBlue
+
+  text-decoration: underline;
+  text-decoration-color: powderblue;
+}
+a:hover{
+  color: DarkOrchid
+
+  text-decoration: underline;
+  text-decoration-color: powderblue;
+}
+a:active{
+  color: CornflowerBlue
+
+  text-decoration: underline;
+  text-decoration-color: powderblue;
+}
